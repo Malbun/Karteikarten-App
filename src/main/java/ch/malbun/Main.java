@@ -3,6 +3,7 @@ package ch.malbun;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -19,6 +20,7 @@ public class Main {
             System.out.println("N: neues Lernset erstellen");
             System.out.println("L: Lernset lernen");
             System.out.println("D: Lernset loeschen");
+            System.out.println("E: Lernset editieren");
             System.out.println(":!exit beendet das Programm!");
 
             switch (scanner.nextLine()) {
@@ -56,7 +58,11 @@ public class Main {
                 case "L" -> {
                     // Lernset auswaehlen
                     System.out.println("Alle verfuegbaren Sets:\n");
-                    FileUtils.getAllSets().forEach(i -> System.out.println(STR."Lernset: \{i}"));
+                    ArrayList<String> files = new ArrayList<>();
+                    FileUtils.getAllSets().forEach(i -> {
+                        System.out.println(STR."Lernset: \{i}");
+                        files.add(i);
+                    });
                     System.out.println("\nLernset auswaehlen");
                     System.out.print("Name eingeben: ");
                     String setName = scanner.nextLine();
@@ -65,6 +71,10 @@ public class Main {
                         continue;
                     }
                     if (Objects.equals(setName, ":!exit")) {
+                        continue;
+                    }
+                    if (!files.contains(setName)) {
+                        System.out.println("Ungueltige Auswahl!");
                         continue;
                     }
 
@@ -78,7 +88,11 @@ public class Main {
 
                 case "D" -> {
                     System.out.println("Alle verfuegbaren Sets:\n");
-                    FileUtils.getAllSets().forEach(i -> System.out.println(STR."Lernset: \{i}"));
+                    ArrayList<String> files = new ArrayList<>();
+                    FileUtils.getAllSets().forEach(i -> {
+                        System.out.println(STR."Lernset: \{i}");
+                        files.add(i);
+                    });
                     System.out.println("\nLernset auswaehlen");
                     System.out.print("Name eingeben: ");
                     String setName = scanner.nextLine();
@@ -89,12 +103,46 @@ public class Main {
                     if (Objects.equals(setName, ":!exit")) {
                         continue;
                     }
+                    if (!files.contains(setName)) {
+                        System.out.println("Ungueltige Auswahl!");
+                        continue;
+                    }
 
-                    System.out.print(STR."Lernset \{setName} wirklich loeschen? (y/n) standard n: ");
+                    System.out.print(STR."Lernset \{setName} wirklich loeschen? (y/n): ");
                     if (Objects.equals(scanner.nextLine(), "y")) {
                         Files.delete(Path.of(STR."\{setName}.lob"));
                         System.out.println(STR."Lernset \{setName} erfolgreich geloescht!");
                     }
+                }
+
+                case "E" -> {
+                    //Lernset editieren
+                    System.out.println("Alle verfuegbaren Sets:\n");
+                    ArrayList<String> files = new ArrayList<>();
+                    FileUtils.getAllSets().forEach(i -> {
+                        System.out.println(STR."Lernset: \{i}");
+                        files.add(i);
+                    });
+                    System.out.println("\nLernset auswaehlen");
+                    System.out.print("Name eingeben: ");
+                    String setName = scanner.nextLine();
+                    if (setName.isBlank() || setName.isEmpty()) {
+                        System.out.println("Ungueltige Auswahl!\n");
+                        continue;
+                    }
+                    if (Objects.equals(setName, ":!exit")) {
+                        continue;
+                    }
+                    if (!files.contains(setName)) {
+                        System.out.println("Ungueltige Auswahl!");
+                        continue;
+                    }
+
+                    array.load(STR."\{setName}.lob");
+                    System.out.println(STR."Lernset \{setName} erfolgreich geladen.");
+
+                    array.edit(setName);
+
                 }
 
                 case ":!exit" -> System.exit(0);
