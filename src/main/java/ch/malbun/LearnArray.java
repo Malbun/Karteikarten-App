@@ -1,7 +1,20 @@
 package ch.malbun;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class LearnArray implements Serializable {
     @Serial
@@ -9,17 +22,11 @@ public class LearnArray implements Serializable {
 
     private ArrayList<LearnObject> learnObjects = new ArrayList<>();
 
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     public void addElement(String a, String b) {
         LearnObject c = new LearnObject(a, b);
         learnObjects.add(c);
-    }
-
-    public LearnObject getRandom() {
-        Random r = new Random();
-        int randomNumber = r.nextInt(learnObjects.size());
-        return learnObjects.get(randomNumber);
     }
 
     public void safe(String file) throws IOException {
@@ -34,51 +41,38 @@ public class LearnArray implements Serializable {
     public void load(String file) throws IOException, ClassNotFoundException {
         try (FileInputStream fis = new FileInputStream(file)) {
             ObjectInputStream ois = new ObjectInputStream(fis);
-            ArrayList<LearnObject> loaded = (ArrayList<LearnObject>) ois.readObject();
-            this.learnObjects = loaded;
+          this.learnObjects = (ArrayList<LearnObject>) ois.readObject();
         }
     }
 
     public void learn() {
-        ArrayList<LearnObject> progress = new ArrayList<>();
+        ArrayList<LearnObject> todoLearn = new ArrayList<>(learnObjects);
+        Collections.shuffle(todoLearn);
 
-        int mistakes = 0;
+        ArrayList<Chunk> chunks = new ArrayList<>();
 
-        do {
-            LearnObject current;
-            do {
-                current = getRandom();
-            } while (progress.contains(current));
+        List<List<LearnObject>> batches = batches(todoLearn, 7).toList();
 
-            System.out.println("\n");
-            System.out.println(STR."\{progress.size()} von \{learnObjects.size()}");
-            System.out.print(STR."\{current.getA()}: ");
-
-            String answer = scanner.nextLine();
-
-            if (Objects.equals(answer, current.getB())) {
-                System.out.println("Richtig!");
-                progress.add(current);
-            } else if (Objects.equals(answer, ":!exit")) {
-                break;
-            } else {
-                System.out.println("Falsch!");
-                System.out.println(STR."Richtige Antwort: \{current.getB()}");
-                mistakes++;
-            }
-
-
-        } while (progress.size() != learnObjects.size());
-
-        System.out.println("Lernen beendet!");
-        System.out.println(STR."Anzahl Fehler: \{mistakes}");
-
-        System.out.println("R um nochmals dieses Set zu lernen.");
-
-        if (Objects.equals(scanner.nextLine(), "R")) {
-            learn();
+        for (List<LearnObject> list : batches) {
+            ArrayList<LearnObject> currentObjects = new ArrayList<>(list);
+            Chunk chunk = new Chunk(currentObjects);
+            chunks.add(chunk);
         }
 
+
+        chunks.forEach(Chunk::learn);
+
+    }
+
+    public <T> Stream<List<T>> batches(List<T> source, int length) {
+        if (length <= 0)
+            throw new IllegalArgumentException(STR."length = \{length}");
+        int size = source.size();
+        if (size <= 0)
+            return Stream.empty();
+        int fullChunks = (size - 1) / length;
+        return IntStream.range(0, fullChunks + 1).mapToObj(
+                n -> source.subList(n * length, n == fullChunks ? size : (n + 1) * length));
     }
 
     public void edit(String filename) throws IOException {
@@ -98,86 +92,87 @@ public class LearnArray implements Serializable {
             }
         } while (!(Objects.equals(choise, "N") || Objects.equals(choise, "E") || Objects.equals(choise, "D")));
 
-        if (Objects.equals(choise, "E")) {
-            System.out.println("Alle Karten: ");
-            for (int i = 0; i < learnObjects.size(); i++) {
-                System.out.println(STR."Karte \{i}: \{learnObjects.get(i).getA()}, \{learnObjects.get(i).getB()}");
+      switch (choise) {
+        case "E" -> {
+          System.out.println("Alle Karten: ");
+          for (int i = 0; i < learnObjects.size(); i++) {
+            System.out.println(STR."Karte \{i}: \{learnObjects.get(i).getA()}, \{learnObjects.get(i).getB()}");
 
+          }
+
+          int card = 0;
+
+          boolean correctInput = false;
+          while (!correctInput) {
+            try {
+              System.out.print("Zu bearbeitende Karte wählen: ");
+              String cardString = scanner.nextLine();
+              if (Objects.equals(cardString, ":!exit")) {
+                return;
+              }
+              card = Integer.parseInt(cardString);
+              if ((card >= 0) && (card <= learnObjects.size() - 1)) {
+                correctInput = true;
+              } else {
+                System.out.println("Ungueltige Eingabe");
+              }
+            } catch (NumberFormatException e) {
+              System.out.println("Ungueltige Eingabe!");
             }
+          }
 
-            int card = 0;
+          LearnObject currentLearnObject = learnObjects.get(card);
+          System.out.println("Karte bisher:");
+          System.out.println(STR."1. Wert: \{currentLearnObject.getA()}, 2. Wert: \{currentLearnObject.getB()}\n");
 
-            boolean correctInput = false;
-            while (!correctInput) {
-                try {
-                    System.out.print("Zu bearbeitende Karte wählen: ");
-                    String cardString = scanner.nextLine();
-                    if (Objects.equals(cardString, ":!exit")) {
-                        return;
-                    }
-                    card = Integer.parseInt(cardString);
-                    if ((card >= 0) && (card <= learnObjects.size() - 1)) {
-                        correctInput = true;
-                    } else {
-                        System.out.println("Ungueltige Eingabe");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Ungueltige Eingabe!");
-                }
+          System.out.print("1. Wert eingeben: ");
+          String firstValue = scanner.nextLine();
+          currentLearnObject.setA(firstValue);
+
+          System.out.print("2. Wert eingeben: ");
+          String secondValue = scanner.nextLine();
+          currentLearnObject.setB(secondValue);
+
+          learnObjects.set(card, currentLearnObject);
+
+          System.out.println(STR."Karte editiert: 1. Wert: \{currentLearnObject.getA()}, 2. Wert: \{currentLearnObject.getB()}");
+
+          String remakeChoise = "n";
+          do {
+            System.out.print("Andere Karte editieren/anlegen (y/n): ");
+            remakeChoise = scanner.nextLine();
+            if (!(Objects.equals(remakeChoise, "y") || Objects.equals(remakeChoise, "n"))) {
+              System.out.println("Ungueltige Eingabe!\n");
             }
+          } while (!(Objects.equals(remakeChoise, "y") || Objects.equals(remakeChoise, "n")));
 
-            LearnObject currentLearnObject = learnObjects.get(card);
-            System.out.println("Karte bisher:");
-            System.out.println(STR."1. Wert: \{currentLearnObject.getA()}, 2. Wert: \{currentLearnObject.getB()}\n");
-
-            System.out.print("1. Wert eingeben: ");
-            String firstValue = scanner.nextLine();
-            currentLearnObject.setA(firstValue);
-
-            System.out.print("2. Wert eingeben: ");
-            String secondValue = scanner.nextLine();
-            currentLearnObject.setB(secondValue);
-
-            learnObjects.set(card, currentLearnObject);
-
-            System.out.println(STR."Karte editiert: 1. Wert: \{currentLearnObject.getA()}, 2. Wert: \{currentLearnObject.getB()}");
-
-            String remakeChoise = "n";
-            do {
-                System.out.print("Andere Karte editieren/anlegen (y/n): ");
-                remakeChoise = scanner.nextLine();
-                if (!(Objects.equals(remakeChoise, "y") || Objects.equals(remakeChoise, "n"))) {
-                    System.out.println("Ungueltige Eingabe!\n");
-                }
-            } while (!(Objects.equals(remakeChoise, "y") || Objects.equals(remakeChoise, "n")));
-
-            if (Objects.equals(remakeChoise, "y")) {
-                edit(filename);
-            }
-
-        } else if (Objects.equals(choise, "N")) {
-            while (true) {
-                System.out.println("Dieser Dialog kann mit :!exit verlassen werden.");
-
-                System.out.println("1. Wert eingeben:");
-                String input1 = scanner.nextLine();
-                if (Objects.equals(input1, ":!exit")) {
-                    break;
-                }
-
-                System.out.println("2. Wert eingeben:");
-                String input2 = scanner.nextLine();
-                if (Objects.equals(input2, ":!exit")) {
-                    break;
-                }
-
-                addElement(input1, input2);
-                System.out.println(STR."Karte erfolgreich hinfugefuegt: \{input1}, \{input2}\n");
-                safe(STR."\{filename}.lob");
-            }
-        } else if (Objects.equals(choise, "D")) {
-            delete(filename);
+          if (Objects.equals(remakeChoise, "y")) {
+            edit(filename);
+          }
         }
+        case "N" -> {
+          while (true) {
+            System.out.println("Dieser Dialog kann mit :!exit verlassen werden.");
+
+            System.out.println("1. Wert eingeben:");
+            String input1 = scanner.nextLine();
+            if (Objects.equals(input1, ":!exit")) {
+              break;
+            }
+
+            System.out.println("2. Wert eingeben:");
+            String input2 = scanner.nextLine();
+            if (Objects.equals(input2, ":!exit")) {
+              break;
+            }
+
+            addElement(input1, input2);
+            System.out.println(STR."Karte erfolgreich hinfugefuegt: \{input1}, \{input2}\n");
+            safe(STR."\{filename}.lob");
+          }
+        }
+        case "D" -> delete(filename);
+      }
 
     }
 
@@ -247,7 +242,7 @@ public class LearnArray implements Serializable {
 
             case "n" -> delete(filename);
             case ":!exit" -> {}
-            case null, default -> System.out.println("Ungueltige Auswahl!");
+          default -> System.out.println("Ungueltige Auswahl!");
         }
     }
 }

@@ -1,5 +1,6 @@
 package ch.malbun;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,9 +12,32 @@ import static java.lang.StringTemplate.STR;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+
         LearnArray array = new LearnArray();
 
         Scanner scanner = new Scanner(System.in);
+
+        File lobFile = null;
+        if (args.length >= 1) {
+            lobFile = new File(Path.of(args[0]).toUri().getPath());
+            if (!lobFile.getName().endsWith(".lob")) {
+                throw new RuntimeException(STR."Wrong filetype: \{lobFile.getPath()}");
+            }
+            array.load(lobFile.getPath());
+
+            if (args.length == 2) {
+                String modus = args[1];
+                switch (modus) {
+                    case "L" -> array.learn();
+                    case "E" -> array.edit(lobFile.getAbsolutePath().replace(".lob", ""));
+                    case null, default -> throw new RuntimeException(STR."Unexpected argument: \{args[1]}");
+                }
+            } else {
+                array.learn();
+            }
+        }
+
+
 
         while (true) {
             System.out.println("Modus waehlen");
