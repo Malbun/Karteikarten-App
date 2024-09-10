@@ -20,6 +20,7 @@ public class Chunk {
       LearnObject currentObject = objectIterator.next();
       System.out.println(currentObject.getA() + ": ");
       String response = scanner.nextLine();
+      if (response.equals(":!exit")) return;
 
       if (Objects.equals(response, currentObject.getB())) {
         System.out.println("Richtig!\n");
@@ -51,6 +52,8 @@ public class Chunk {
       LearnObject currentObject = objectIterator.next();
       System.out.println(currentObject.getB() + ": ");
       String response = scanner.nextLine();
+
+      if (response.equals(":!exit")) return;
 
       if (Objects.equals(response, currentObject.getA())) {
         System.out.println("Richtig!\n");

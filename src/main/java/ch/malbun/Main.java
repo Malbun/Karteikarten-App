@@ -102,7 +102,7 @@ public class Main {
 
                     //Lernset laden
                     array.load(setName + ".lob");
-                    System.out.println("Lernset " + setName + "erfolgreich geladen!");
+                    System.out.println("Lernset " + setName + " erfolgreich geladen!");
 
                     //Lernset lernen
                     array.learn();
