@@ -60,7 +60,9 @@ public class LearnArray implements Serializable {
         }
 
 
-        chunks.forEach(Chunk::learn);
+        for (Chunk chunk : chunks) {
+          chunk.learn();
+        }
 
     }
 

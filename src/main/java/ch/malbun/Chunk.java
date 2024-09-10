@@ -8,7 +8,7 @@ public class Chunk {
     objectsOriginal = objectList;
   }
 
-  public void learn() {
+  public boolean learn() {
     Scanner scanner = new Scanner(System.in);
 
     ArrayList<LearnObject> todoList = new ArrayList<>(objectsOriginal);
@@ -20,7 +20,7 @@ public class Chunk {
       LearnObject currentObject = objectIterator.next();
       System.out.println(currentObject.getA() + ": ");
       String response = scanner.nextLine();
-      if (response.equals(":!exit")) return;
+      if (response.equals(":!exit")) return false;
 
       if (Objects.equals(response, currentObject.getB())) {
         System.out.println("Richtig!\n");
@@ -36,11 +36,10 @@ public class Chunk {
 
     }
 
-    learnB();
-
+    return learnB();
   }
 
-  private void learnB() {
+  private boolean learnB() {
     Scanner scanner = new Scanner(System.in);
 
     ArrayList<LearnObject> todoList = new ArrayList<>(objectsOriginal);
@@ -53,7 +52,7 @@ public class Chunk {
       System.out.println(currentObject.getB() + ": ");
       String response = scanner.nextLine();
 
-      if (response.equals(":!exit")) return;
+      if (response.equals(":!exit")) return false;
 
       if (Objects.equals(response, currentObject.getA())) {
         System.out.println("Richtig!\n");
@@ -68,6 +67,7 @@ public class Chunk {
       objectIterator = todoList.iterator();
 
     }
+    return true;
   }
 
 }
