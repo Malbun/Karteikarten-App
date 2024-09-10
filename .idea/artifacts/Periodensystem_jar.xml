@@ -2,7 +2,7 @@
   <artifact type="jar" name="Periodensystem:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Periodensystem_jar</output-path>
     <root id="archive" name="Periodensystem.jar">
-      <element id="module-output" name="Periodensystem" />
+      <element id="module-output" name="Karteikarten-App" />
     </root>
   </artifact>
 </component>

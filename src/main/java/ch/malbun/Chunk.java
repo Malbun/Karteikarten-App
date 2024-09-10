@@ -18,7 +18,7 @@ public class Chunk {
 
     while (objectIterator.hasNext()) {
       LearnObject currentObject = objectIterator.next();
-      System.out.println(STR."\{currentObject.getA()}: ");
+      System.out.println(currentObject.getA() + ": ");
       String response = scanner.nextLine();
 
       if (Objects.equals(response, currentObject.getB())) {
@@ -26,7 +26,7 @@ public class Chunk {
         todoList.remove(currentObject);
       } else {
         System.out.println("Falsch!");
-        System.out.println(STR."Richtige Antwort: \{currentObject.getB()}\n");
+        System.out.println("Richtige Antwort: " + currentObject.getB() + "\n");
         todoList.add(currentObject);
       }
 
@@ -49,7 +49,7 @@ public class Chunk {
 
     while (objectIterator.hasNext()) {
       LearnObject currentObject = objectIterator.next();
-      System.out.println(STR."\{currentObject.getB()}: ");
+      System.out.println(currentObject.getB() + ": ");
       String response = scanner.nextLine();
 
       if (Objects.equals(response, currentObject.getA())) {
@@ -57,7 +57,7 @@ public class Chunk {
         todoList.remove(currentObject);
       } else {
         System.out.println("Falsch!");
-        System.out.println(STR."Richtige Antwort: \{currentObject.getA()}\n");
+        System.out.println("Richtige Antwort: " + currentObject.getA() + "\n");
         todoList.add(currentObject);
       }
 

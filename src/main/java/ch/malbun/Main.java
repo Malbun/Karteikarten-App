@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static java.lang.StringTemplate.STR;
-
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
@@ -21,7 +19,7 @@ public class Main {
         if (args.length >= 1) {
             lobFile = new File(Path.of(args[0]).toUri().getPath());
             if (!lobFile.getName().endsWith(".lob")) {
-                throw new RuntimeException(STR."Wrong filetype: \{lobFile.getPath()}");
+                throw new RuntimeException("Wrong filetype: " + lobFile.getPath());
             }
             array.load(lobFile.getPath());
 
@@ -30,7 +28,7 @@ public class Main {
                 switch (modus) {
                     case "L" -> array.learn();
                     case "E" -> array.edit(lobFile.getAbsolutePath().replace(".lob", ""));
-                    case null, default -> throw new RuntimeException(STR."Unexpected argument: \{args[1]}");
+                    case null, default -> throw new RuntimeException("Unexpected argument: " + args[1]);
                 }
             } else {
                 array.learn();
@@ -64,7 +62,7 @@ public class Main {
                         }
 
                         array.addElement(input1, input2);
-                        System.out.println(STR."Karte erfolgreich hinfugefuegt: \{input1}, \{input2}\n");
+                        System.out.println("Karte erfolgreich hinfugefuegt: " + input1 + ", " + input2 + "\n");
 
                     }
                     String name = " ";
@@ -75,8 +73,8 @@ public class Main {
                         name = scanner.nextLine();
                     } while (name.contains(" ") || name.isBlank() || name.isEmpty());
 
-                    array.safe(STR."\{name}.lob");
-                    System.out.println(STR."Lernset \{name} erfolgreich gespeichert");
+                    array.safe(name + ".lob");
+                    System.out.println("Lernset " + name + " erfolgreich gespeichert");
                 }
 
                 case "L" -> {
@@ -84,7 +82,7 @@ public class Main {
                     System.out.println("Alle verfuegbaren Sets:\n");
                     ArrayList<String> files = new ArrayList<>();
                     FileUtils.getAllSets().forEach(i -> {
-                        System.out.println(STR."Lernset: \{i}");
+                        System.out.println("Lernset: " + i);
                         files.add(i);
                     });
                     System.out.println("\nLernset auswaehlen");
@@ -103,8 +101,8 @@ public class Main {
                     }
 
                     //Lernset laden
-                    array.load(STR."\{setName}.lob");
-                    System.out.println(STR."Lernset \{setName} erfolgreich geladen!");
+                    array.load(setName + ".lob");
+                    System.out.println("Lernset " + setName + "erfolgreich geladen!");
 
                     //Lernset lernen
                     array.learn();
@@ -114,7 +112,7 @@ public class Main {
                     System.out.println("Alle verfuegbaren Sets:\n");
                     ArrayList<String> files = new ArrayList<>();
                     FileUtils.getAllSets().forEach(i -> {
-                        System.out.println(STR."Lernset: \{i}");
+                        System.out.println("Lernset: " + i);
                         files.add(i);
                     });
                     System.out.println("\nLernset auswaehlen");
@@ -132,10 +130,10 @@ public class Main {
                         continue;
                     }
 
-                    System.out.print(STR."Lernset \{setName} wirklich loeschen? (y/n): ");
+                    System.out.print("Lernset " + setName + " wirklich loeschen? (y/n): ");
                     if (Objects.equals(scanner.nextLine(), "y")) {
-                        Files.delete(Path.of(STR."\{setName}.lob"));
-                        System.out.println(STR."Lernset \{setName} erfolgreich geloescht!");
+                        Files.delete(Path.of(setName + ".lob"));
+                        System.out.println("Lernset " + setName + " erfolgreich geloescht!");
                     }
                 }
 
@@ -144,7 +142,7 @@ public class Main {
                     System.out.println("Alle verfuegbaren Sets:\n");
                     ArrayList<String> files = new ArrayList<>();
                     FileUtils.getAllSets().forEach(i -> {
-                        System.out.println(STR."Lernset: \{i}");
+                        System.out.println("Lernset: " + i);
                         files.add(i);
                     });
                     System.out.println("\nLernset auswaehlen");
@@ -162,8 +160,8 @@ public class Main {
                         continue;
                     }
 
-                    array.load(STR."\{setName}.lob");
-                    System.out.println(STR."Lernset \{setName} erfolgreich geladen.");
+                    array.load(setName + ".lob");
+                    System.out.println("Lernset " + setName + " erfolgreich geladen.");
 
                     array.edit(setName);
 

@@ -66,7 +66,7 @@ public class LearnArray implements Serializable {
 
     public <T> Stream<List<T>> batches(List<T> source, int length) {
         if (length <= 0)
-            throw new IllegalArgumentException(STR."length = \{length}");
+            throw new IllegalArgumentException("length = " + length);
         int size = source.size();
         if (size <= 0)
             return Stream.empty();
@@ -96,7 +96,7 @@ public class LearnArray implements Serializable {
         case "E" -> {
           System.out.println("Alle Karten: ");
           for (int i = 0; i < learnObjects.size(); i++) {
-            System.out.println(STR."Karte \{i}: \{learnObjects.get(i).getA()}, \{learnObjects.get(i).getB()}");
+            System.out.println("Karte " + i + ": " + learnObjects.get(i).getA() + ", " + learnObjects.get(i).getB());
 
           }
 
@@ -123,7 +123,7 @@ public class LearnArray implements Serializable {
 
           LearnObject currentLearnObject = learnObjects.get(card);
           System.out.println("Karte bisher:");
-          System.out.println(STR."1. Wert: \{currentLearnObject.getA()}, 2. Wert: \{currentLearnObject.getB()}\n");
+          System.out.println("1. Wert: " + currentLearnObject.getA() + ", 2. Wert: " + currentLearnObject.getB() + "\n");
 
           System.out.print("1. Wert eingeben: ");
           String firstValue = scanner.nextLine();
@@ -135,7 +135,7 @@ public class LearnArray implements Serializable {
 
           learnObjects.set(card, currentLearnObject);
 
-          System.out.println(STR."Karte editiert: 1. Wert: \{currentLearnObject.getA()}, 2. Wert: \{currentLearnObject.getB()}");
+          System.out.println("Karte editiert: 1. Wert: " + currentLearnObject.getA() + ", 2. Wert: " + currentLearnObject.getB());
 
           String remakeChoise = "n";
           do {
@@ -167,8 +167,8 @@ public class LearnArray implements Serializable {
             }
 
             addElement(input1, input2);
-            System.out.println(STR."Karte erfolgreich hinfugefuegt: \{input1}, \{input2}\n");
-            safe(STR."\{filename}.lob");
+            System.out.println("Karte erfolgreich hinfugefuegt: " + input1 + ", " + input2 + "\n");
+            safe(filename + ".lob");
           }
         }
         case "D" -> delete(filename);
@@ -179,7 +179,7 @@ public class LearnArray implements Serializable {
     private void delete(String filename) throws IOException {
         System.out.println("Alle Karten: ");
         for (int i = 0; i < learnObjects.size(); i++) {
-            System.out.println(STR."Karte \{i}: \{learnObjects.get(i).getA()}, \{learnObjects.get(i).getB()}");
+            System.out.println("Karte " + i + ": " + learnObjects.get(i).getA() + ", " + learnObjects.get(i).getB());
 
         }
 
@@ -207,7 +207,7 @@ public class LearnArray implements Serializable {
         String deleteChoise = null;
 
         while (true) {
-            System.out.print(STR."Karte \{card} wirklich loeschen? (y/n): ");
+            System.out.print("Karte " + card + " wirklich loeschen? (y/n): ");
             deleteChoise = scanner.nextLine();
             if (Objects.equals(deleteChoise, "y") || Objects.equals(deleteChoise, "n") || Objects.equals(deleteChoise, ":!exit")) {
                 break;
@@ -219,8 +219,8 @@ public class LearnArray implements Serializable {
         switch (deleteChoise) {
             case "y" -> {
                 learnObjects.remove(card);
-                safe(STR."\{filename}.lob");
-                System.out.println(STR."Karte \{card} gelöscht!\n");
+                safe(filename + ".lob");
+                System.out.println("Karte " + card + " gelöscht!\n");
                 boolean continueBoolean = false;
                 String continueChoise = null;
                 while (!continueBoolean) {
